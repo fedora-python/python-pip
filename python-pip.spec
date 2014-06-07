@@ -2,7 +2,7 @@
 
 %global srcname pip
 %if 0%{?build_wheel}
-%global python3_wheelname %{srcname}-%{version}-py2.py3-none-any.whl
+%global python3_wheelname %{srcname}-*-py2.py3-none-any.whl
 %endif
 
 Name:           python35-%{srcname}
