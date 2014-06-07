@@ -1,4 +1,4 @@
-%global build_wheel 0
+%global build_wheel 1
 
 %global srcname pip
 %if 0%{?build_wheel}
@@ -7,7 +7,7 @@
 
 Name:           python35-%{srcname}
 Version:        1.5.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A tool for installing and managing Python 3 packages
 
 Group:          Development/Libraries
@@ -51,7 +51,7 @@ easy_installable should be pip-installable as well.
 %{__rm} -rf %{buildroot}
 
 %if 0%{?build_wheel}
-pip3 install -I dist/%{python3_wheelname} --root %{buildroot} --strip-file-prefix %{buildroot}
+pip3.5 install -I dist/%{python3_wheelname} --root %{buildroot} --strip-file-prefix %{buildroot}
 %else
 %{__python35} setup.py install --skip-build --root %{buildroot}
 %endif
@@ -72,6 +72,9 @@ rm %{buildroot}%{_bindir}/pip3
 %{python35_sitelib}/pip*
 
 %changelog
+* Sat Jun 07 2014 Miro Hrončok <mhroncok@redhat.com> - 1.5.6-2
+- Bootstraping
+
 * Sun May 25 2014 Matej Stuchlik <mstuchli@redhat.com> - 1.5.6-1
 - Update to 1.5.6
 
