@@ -6,14 +6,14 @@
 %endif
 
 Name:           python35-%{srcname}
-Version:        1.5.6
-Release:        2%{?dist}
+Version:        1.6
+Release:        0.1.20140607git3eaea35f%{?dist}
 Summary:        A tool for installing and managing Python 3 packages
 
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.pip-installer.org
-Source0:        http://pypi.python.org/packages/source/p/pip/%{srcname}-%{version}.tar.gz
+Source0:        python3-nightly-pip-3eaea35f.tar
 Patch0:         pip-1.5rc1-allow-stripping-prefix-from-wheel-RECORD-files.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -33,7 +33,7 @@ same techniques for finding packages, so packages that were made
 easy_installable should be pip-installable as well.
 
 %prep
-%setup -q -n %{srcname}-%{version}
+%setup -q -n python3-nightly-%{srcname}
 
 %patch0 -p1
 
@@ -72,6 +72,9 @@ rm %{buildroot}%{_bindir}/pip3
 %{python35_sitelib}/pip*
 
 %changelog
+* Sat Jun 07 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.1.20140607git3eaea35f
+- Update to git: 3eaea35f
+
 * Sat Jun 07 2014 Miro Hrončok <mhroncok@redhat.com> - 1.5.6-2
 - Bootstraping
 
@@ -150,7 +153,7 @@ rm %{buildroot}%{_bindir}/pip3
 * Fri Jan 1 2010 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1.4
 - fix dependency issue
 * Fri Dec 18 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-2
-- fix spec file 
+- fix spec file
 * Thu Dec 17 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-1
 - upgrade to 0.6.1 of pip
 * Mon Aug 31 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.4-1
