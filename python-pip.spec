@@ -1,6 +1,6 @@
 %global with_python2 0
 %global with_python3 1
-%global build_wheel 0
+%global build_wheel 1
 
 %global srcname pip
 
@@ -17,7 +17,7 @@
 
 Name:           %{?scl_prefix}python-%{srcname}
 Version:        1.6
-Release:        0.3.20140626gitbb6c11ed%{?dist}
+Release:        0.4.20140626gitbb6c11ed%{?dist}
 Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
@@ -156,6 +156,9 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 %endif # with_python3
 
 %changelog
+* Fri Jun 27 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.4.20140626gitbb6c11ed
+- Bootstrap
+
 * Thu Jun 26 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.3.20140626gitbb6c11ed
 - Update to git: bb6c11ed
 - SCL
