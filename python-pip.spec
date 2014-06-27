@@ -1,36 +1,69 @@
-%global build_wheel 1
+%global with_python2 0
+%global with_python3 1
+%global build_wheel 0
 
 %global srcname pip
+
+%{?scl:%scl_package python-%{srcname}}
+%{!?scl:%global pkg_name %{name}}
+%{?scl:%global py3dir %{_builddir}/python3-%{name}-%{version}-%{release}}
+
 %if 0%{?build_wheel}
-%global python3_wheelname %{srcname}-*-py2.py3-none-any.whl
+%global python2_wheelname %{srcname}-*-py2.py3-none-any.whl
+%if 0%{?with_python3}
+%global python3_wheelname %python2_wheelname
+%endif
 %endif
 
-Name:           python35-%{srcname}
+Name:           %{?scl_prefix}python-%{srcname}
 Version:        1.6
-Release:        0.1.20140607git3eaea35f%{?dist}
-Summary:        A tool for installing and managing Python 3 packages
+Release:        0.3.20140626gitbb6c11ed%{?dist}
+Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.pip-installer.org
-Source0:        python3-nightly-pip-3eaea35f.tar
+Source0:        python3-nightly-pip-bb6c11ed.tar
 Patch0:         pip-1.6-allow-stripping-prefix-from-wheel-RECORD-files.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python35-devel
-BuildRequires:  python35-setuptools
+%if 0%{?with_python2}
+BuildRequires:  python-devel
+BuildRequires:  python-setuptools
 %if 0%{?build_wheel}
-BuildRequires:  python35-pip
-BuildRequires:  python35-wheel
+BuildRequires:  python-pip
+BuildRequires:  python-wheel
 %endif
-Requires:  python35-setuptools
+Requires:       python-setuptools
+%endif # with_python2
 
 %description
 Pip is a replacement for `easy_install
 <http://peak.telecommunity.com/DevCenter/EasyInstall>`_.  It uses mostly the
 same techniques for finding packages, so packages that were made
 easy_installable should be pip-installable as well.
+
+
+%if 0%{?with_python3}
+%package -n %{?scl_prefix}python3-%{srcname}
+Summary:        A tool for installing and managing Python3 packages
+Group:          Development/Libraries
+
+BuildRequires:  %{?scl_prefix}python3-devel
+BuildRequires:  %{?scl_prefix}python3-setuptools
+%if 0%{?build_wheel}
+BuildRequires:  %{?scl_prefix}python3-pip
+BuildRequires:  %{?scl_prefix}python3-wheel
+%endif
+Requires:  %{?scl_prefix}python3-setuptools
+
+%description -n %{?scl_prefix}python3-%{srcname}
+Pip is a replacement for `easy_install
+<http://peak.telecommunity.com/DevCenter/EasyInstall>`_.  It uses mostly the
+same techniques for finding packages, so packages that were made
+easy_installable should be pip-installable as well.
+%endif # with_python3
 
 %prep
 %setup -q -n python3-nightly-%{srcname}
@@ -39,25 +72,60 @@ easy_installable should be pip-installable as well.
 
 %{__sed} -i '1d' pip/__init__.py
 
-%build
-%if 0%{?build_wheel}
-%{__python35} setup.py bdist_wheel
-%else
-%{__python35} setup.py build
-%endif
+%if 0%{?with_python3}
+cp -a . %{py3dir}
+%endif # with_python3
 
+
+%build
+%{?scl:scl enable %scl - << \EOF}
+%if 0%{?with_python2}
+%if 0%{?build_wheel}
+%{__python2} setup.py bdist_wheel
+%else
+%{__python2} setup.py build
+%endif
+%endif # with_python2
+
+%if 0%{?with_python3}
+pushd %{py3dir}
+%if 0%{?build_wheel}
+%{__python3} setup.py bdist_wheel
+%else
+%{__python3} setup.py build
+%endif
+popd
+%endif # with_python3
+%{?scl:EOF}
 
 %install
 %{__rm} -rf %{buildroot}
 
+%{?scl:scl enable %scl - << \EOF}
+%if 0%{?with_python3}
+pushd %{py3dir}
 %if 0%{?build_wheel}
-pip3.5 install -I dist/%{python3_wheelname} --root %{buildroot} --strip-file-prefix %{buildroot}
-%else
-%{__python35} setup.py install --skip-build --root %{buildroot}
-%endif
+pip3 install -I dist/%{python3_wheelname} --root %{buildroot} --strip-file-prefix %{buildroot}
 
+%if 0%{?with_python2}
+# TODO: we have to remove this by hand now, but it'd be nice if we wouldn't have to
+# (pip install wheel doesn't overwrite)
 rm %{buildroot}%{_bindir}/pip
-rm %{buildroot}%{_bindir}/pip3
+%endif # with_python2
+
+%else
+%{__python3} setup.py install --skip-build --root %{buildroot}
+%endif
+%endif # with_python3
+
+%if 0%{?with_python2}
+%if 0%{?build_wheel}
+pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefix %{buildroot}
+%else
+%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+%endif
+%endif # with_python2
+%{?scl:EOF}
 
 %clean
 %{__rm} -rf %{buildroot}
@@ -65,18 +133,32 @@ rm %{buildroot}%{_bindir}/pip3
 # unfortunately, pip's test suite requires virtualenv >= 1.6 which isn't in
 # fedora yet. Once it is, check can be implemented
 
+%if 0%{?with_python2}
 %files
 %defattr(-,root,root,-)
 %doc LICENSE.txt README.rst docs
+%attr(755,root,root) %{_bindir}/pip
+%attr(755,root,root) %{_bindir}/pip2*
+%{python_sitelib}/pip*
+%endif # with_python2
+
+%if 0%{?with_python3}
+%files -n %{?scl_prefix}python3-%{srcname}
+%defattr(-,root,root,-)
+%doc LICENSE.txt README.rst docs
 %attr(755,root,root) %{_bindir}/pip3*
-%{python35_sitelib}/pip*
+%{python3_sitelib}/pip*
+
+%if ! 0%{?with_python2}
+%attr(755,root,root) %{_bindir}/pip
+%endif # ! with_python2
+
+%endif # with_python3
 
 %changelog
-* Sat Jun 07 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.1.20140607git3eaea35f
-- Update to git: 3eaea35f
-
-* Sat Jun 07 2014 Miro Hrončok <mhroncok@redhat.com> - 1.5.6-2
-- Bootstraping
+* Thu Jun 26 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.3.20140626gitbb6c11ed
+- Update to git: bb6c11ed
+- SCL
 
 * Sun May 25 2014 Matej Stuchlik <mstuchli@redhat.com> - 1.5.6-1
 - Update to 1.5.6
@@ -153,7 +235,7 @@ rm %{buildroot}%{_bindir}/pip3
 * Fri Jan 1 2010 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1.4
 - fix dependency issue
 * Fri Dec 18 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-2
-- fix spec file
+- fix spec file 
 * Thu Dec 17 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-1
 - upgrade to 0.6.1 of pip
 * Mon Aug 31 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.4-1
