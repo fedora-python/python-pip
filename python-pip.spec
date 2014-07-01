@@ -17,13 +17,13 @@
 
 Name:           %{?scl_prefix}python-%{srcname}
 Version:        1.6
-Release:        0.4.20140626gitbb6c11ed%{?dist}
+Release:        0.5.20140701git6410ba43%{?dist}
 Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.pip-installer.org
-Source0:        python3-nightly-pip-bb6c11ed.tar
+Source0:        python3-nightly-pip-6410ba43.tar
 Patch0:         pip-1.6-allow-stripping-prefix-from-wheel-RECORD-files.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -156,6 +156,9 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 %endif # with_python3
 
 %changelog
+* Tue Jul 01 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.5.20140701git6410ba43
+- Update to git: 6410ba43
+
 * Fri Jun 27 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.4.20140626gitbb6c11ed
 - Bootstrap
 
@@ -238,7 +241,7 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 * Fri Jan 1 2010 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1.4
 - fix dependency issue
 * Fri Dec 18 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-2
-- fix spec file 
+- fix spec file
 * Thu Dec 17 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.6.1-1
 - upgrade to 0.6.1 of pip
 * Mon Aug 31 2009 Peter Halliday <phalliday@excelsiorsystems.net> - 0.4-1
