@@ -17,7 +17,7 @@
 
 Name:           %{?scl_prefix}python-%{srcname}
 Version:        1.6
-Release:        0.7.20140704git2432fe67%{?dist}
+Release:        0.8.20140704git2432fe67%{?dist}
 Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
@@ -156,6 +156,9 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 %endif # with_python3
 
 %changelog
+* Fri Jul 04 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.8.20140704git2432fe67
+- Rebased the stripping patch
+
 * Fri Jul 04 2014 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.7.20140704git2432fe67
 - Update to git: 2432fe67
 
