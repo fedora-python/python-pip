@@ -1,8 +1,8 @@
 diff --git a/pip/commands/install.py b/pip/commands/install.py
-index f59c488..346007c 100644
+index 367bc59..0247c61 100644
 --- a/pip/commands/install.py
 +++ b/pip/commands/install.py
-@@ -132,6 +132,14 @@ class InstallCommand(Command):
+@@ -144,6 +144,14 @@ class InstallCommand(Command):
                   "directory.")
  
          cmd_opts.add_option(
@@ -17,28 +17,28 @@ index f59c488..346007c 100644
              "--compile",
              action="store_true",
              dest="compile",
-@@ -312,6 +320,7 @@ class InstallCommand(Command):
-                         install_options,
-                         global_options,
-                         root=options.root_path,
-+                        strip_file_prefix=options.strip_file_prefix,
-                     )
-                     installed = ' '.join([
-                         req.name for req in
+@@ -345,6 +353,7 @@ class InstallCommand(Command):
+                             install_options,
+                             global_options,
+                             root=options.root_path,
++                            strip_file_prefix=options.strip_file_prefix,
+                         )
+                         reqs = sorted(
+                             requirement_set.successfully_installed,
 diff --git a/pip/req/req_install.py b/pip/req/req_install.py
-index a087f4c..928f960 100644
+index 24649e9..667042b 100644
 --- a/pip/req/req_install.py
 +++ b/pip/req/req_install.py
-@@ -715,7 +715,7 @@ exec(compile(
-         name = name.replace(os.path.sep, '/')
-         return name
+@@ -729,7 +729,7 @@ exec(compile(
+         else:
+             return True
  
 -    def install(self, install_options, global_options=(), root=None):
 +    def install(self, install_options, global_options=(), root=None, strip_file_prefix=None):
          if self.editable:
              self.install_editable(install_options, global_options)
              return
-@@ -723,7 +723,11 @@ exec(compile(
+@@ -737,7 +737,11 @@ exec(compile(
              version = pip.wheel.wheel_version(self.source_dir)
              pip.wheel.check_compatibility(version, self.name)
  
@@ -51,7 +51,7 @@ index a087f4c..928f960 100644
              self.install_succeeded = True
              return
  
-@@ -918,13 +922,14 @@ exec(compile(
+@@ -939,7 +943,7 @@ exec(compile(
      def is_wheel(self):
          return self.url and '.whl' in self.url
  
@@ -60,27 +60,28 @@ index a087f4c..928f960 100644
          move_wheel_files(
              self.name, self.req, wheeldir,
              user=self.use_user_site,
-             home=self.target_dir,
+@@ -947,6 +951,7 @@ exec(compile(
              root=root,
              pycompile=self.pycompile,
+             isolated=self.isolated,
 +            strip_file_prefix=strip_file_prefix,
          )
  
-     @property
+     def get_dist(self):
 diff --git a/pip/wheel.py b/pip/wheel.py
-index cfe335a..94a9878 100644
+index a2d9e12..91af4ef 100644
 --- a/pip/wheel.py
 +++ b/pip/wheel.py
-@@ -128,7 +128,7 @@ def get_entrypoints(filename):
+@@ -129,7 +129,7 @@ def get_entrypoints(filename):
  
  
  def move_wheel_files(name, req, wheeldir, user=False, home=None, root=None,
--                     pycompile=True, scheme=None):
-+                     pycompile=True, scheme=None, strip_file_prefix=None):
+-                     pycompile=True, scheme=None, isolated=False):
++                     pycompile=True, scheme=None, isolated=False, strip_file_prefix=None):
      """Install a wheel"""
  
      if not scheme:
-@@ -370,6 +370,8 @@ if __name__ == '__main__':
+@@ -394,6 +394,8 @@ if __name__ == '__main__':
                  writer.writerow(row)
              for f in generated:
                  h, l = rehash(f)
