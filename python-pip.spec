@@ -16,8 +16,8 @@
 %endif
 
 Name:           %{?scl_prefix}python-%{srcname}
-Version:        1.6
-Release:        0.74.20150129git311622bc%{?dist}
+Version:        6.1.0
+Release:        0.1.20150129git311622bc%{?dist}
 Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
@@ -156,6 +156,10 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 %endif # with_python3
 
 %changelog
+* Fri Jan 30 2015 Miro Hrončok <mhroncok@redhat.com> - 6.1.0-0.1.20150129git311622bc
+- Synced the version with upstream
+- Rebased pacthes
+
 * Thu Jan 29 2015 Miro Hrončok <mhroncok@redhat.com> - 1.6-0.74.20150129git311622bc
 - Update to git: 311622bc
 
