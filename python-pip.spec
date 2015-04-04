@@ -17,13 +17,13 @@
 
 Name:           %{?scl_prefix}python-%{srcname}
 Version:        6.1.0
-Release:        0.25.20150403git72735a1f%{?dist}
+Release:        0.26.20150404git34e27fe8%{?dist}
 Summary:        A tool for installing and managing Python packages
 
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.pip-installer.org
-Source0:        python3-nightly-pip-72735a1f.tar
+Source0:        python3-nightly-pip-34e27fe8.tar
 Patch0:         pip-allow-stripping-prefix-from-wheel-RECORD-files.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -156,6 +156,9 @@ pip2 install -I dist/%{python2_wheelname} --root %{buildroot} --strip-file-prefi
 %endif # with_python3
 
 %changelog
+* Sat Apr 04 2015 Miro Hrončok <mhroncok@redhat.com> - 6.1.0-0.26.20150404git34e27fe8
+- Update to git: 34e27fe8
+
 * Fri Apr 03 2015 Miro Hrončok <mhroncok@redhat.com> - 6.1.0-0.25.20150403git72735a1f
 - Update to git: 72735a1f
 
